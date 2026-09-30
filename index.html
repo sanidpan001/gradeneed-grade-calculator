@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GradeNeed — Final Grade Calculator: What Do I Need on My Final Exam?</title>
+<meta name="description" content="GradeNeed is a free final grade calculator. Enter your current grade, final exam weight, and target grade to see exactly what you need on your final — with honest impossible-grade alerts, what-if scenarios, and step-by-step math.">
+<link rel="canonical" href="https://gradeneed.example.com/">
+<meta property="og:title" content="GradeNeed — Final Grade Calculator">
+<meta property="og:description" content="What do you need on your final to get an A? Enter 3 numbers and find out — with honest impossible-grade alerts and worked step-by-step math.">
+<meta property="og:type" content="website">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        crimson: { DEFAULT: '#7F1D1D', dark: '#5F1414', deep: '#450E0E' },
+        cream: { DEFAULT: '#FAF3E3', dark: '#F3E8CF', line: '#E7D9B8' },
+        gold: { DEFAULT: '#D4AF37', light: '#E8C96A', pale: '#F6EAC0' }
+      },
+      fontFamily: {
+        report: ['Georgia', "'Times New Roman'", 'serif'],
+        body: ['system-ui', '-apple-system', "'Segoe UI'", 'Roboto', 'sans-serif'],
+        mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Consolas', 'monospace']
+      }
+    }
+  }
+}
+</script>
+<style>
+  html { scroll-behavior: smooth; }
+  body { background-color: #FAF3E3; }
+  .ruled-paper {
+    background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(127,29,29,0.07) 31px, rgba(127,29,29,0.07) 32px);
+  }
+  .report-card-frame {
+    border: 3px double #D4AF37;
+    outline: 1px solid #7F1D1D;
+    outline-offset: 4px;
+  }
+  .stamp {
+    display: inline-block;
+    transform: rotate(-2deg);
+    border: 3px solid currentColor;
+    border-radius: 6px;
+    padding: 0.15rem 0.7rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 700;
+  }
+  .tab-active { background-color: #7F1D1D !important; color: #FAF3E3 !important; }
+  input[type=number]::-webkit-inner-spin-button { opacity: 1; }
+  @media print { .no-print { display: none !important; } }
+  .faq-item summary::-webkit-details-marker { display: none; }
+</style>
+</head>
+<body id="top" class="font-body text-stone-900 antialiased">
+
+<!-- ============ STICKY HEADER ============ -->
+<header class="no-print sticky top-0 z-50 bg-crimson text-cream shadow-lg border-b-4 border-gold">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-3 flex items-center justify-between">
+    <a href="#top" class="font-report text-2xl sm:text-3xl font-bold tracking-tight" aria-label="GradeNeed home">
+      <span class="text-gold">▮</span> Grade<span class="text-gold">Need</span>
+    </a>
+    <nav class="flex items-center gap-4 sm:gap-8 text-sm sm:text-base font-semibold">
+      <a href="#top" class="hover:text-gold transition-colors">Home</a>
+      <span class="text-gold/60" aria-hidden="true">|</span>
+      <a href="https://fixoraa.tech" class="hover:text-gold transition-colors">More Tools</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ============ TOP AD (verbatim) ============ -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<main class="mx-auto max-w-6xl px-4 sm:px-6">
+
+  <!-- ============ HERO ============ -->
+  <section class="text-center pt-8 pb-6">
+    <h1 class="font-report text-4xl sm:text-5xl font-bold text-crimson-deep leading-tight">Final Grade Calculator</h1>
+    <p class="mt-3 text-lg text-stone-700 max-w-2xl mx-auto">What do you need on your final to get an A? Enter three numbers — your current grade, the final's weight, and your target — and get an honest answer with the math shown.</p>
+    <div class="mt-4">
+      <span class="inline-flex items-center gap-2 rounded-full bg-crimson text-cream px-5 py-2 text-sm font-bold tracking-wide shadow">
+        <svg class="w-4 h-4 text-gold" fill="currentColor" viewBox="0 0 20 20" aria-hidden="true"><path d="M10 1l2.4 5.2 5.6.6-4.2 3.9 1.2 5.6L10 13.4 5 16.3l1.2-5.6L2 6.8l5.6-.6L10 1z"/></svg>
+        Unlimited Free Usage
+      </span>
+    </div>
+  </section>
+
+  <!-- ============ TOOL: REPORT CARD ============ -->
+  <section id="tool" aria-label="Final grade calculator tool" class="pb-10">
+    <div class="report-card-frame ruled-paper bg-white rounded-sm shadow-xl p-4 sm:p-8">
+
+      <!-- Report card masthead -->
+      <div class="text-center border-b-2 border-crimson/70 pb-4 mb-6">
+        <p class="text-xs tracking-[0.3em] uppercase text-crimson/70 font-semibold">Official Grade Worksheet</p>
+        <h2 class="font-report text-2xl sm:text-3xl font-bold text-crimson-deep mt-1">Final Exam Report Card</h2>
+        <p class="text-sm text-stone-500 mt-1">Term: Finals Week &nbsp;•&nbsp; Status: <span class="text-crimson font-semibold">In Progress</span></p>
+      </div>
+
+      <!-- Mode tabs -->
+      <div class="flex flex-col sm:flex-row gap-2 justify-center mb-6" role="tablist" aria-label="Calculator mode">
+        <button id="tab-need" role="tab" aria-selected="true" class="tab-active flex-1 sm:flex-none px-6 py-3 rounded-md border-2 border-crimson font-bold bg-cream text-crimson transition-colors">🎯 What do I need on my final?</button>
+        <button id="tab-project" role="tab" aria-selected="false" class="flex-1 sm:flex-none px-6 py-3 rounded-md border-2 border-crimson font-bold bg-cream text-crimson transition-colors">🔮 Project my course grade</button>
+      </div>
+
+      <!-- ===== PANEL: NEED MODE ===== -->
+      <div id="panel-need" role="tabpanel">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <label class="block bg-cream rounded-md border border-cream-line p-4">
+            <span class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2">Current grade (before final)</span>
+            <div class="flex items-center gap-1">
+              <input id="in-current" type="number" min="0" max="100" step="0.1" value="85" inputmode="decimal"
+                class="w-full text-2xl font-bold text-crimson-deep bg-white border border-cream-line rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="Current grade percent">
+              <span class="text-xl font-bold text-stone-400">%</span>
+            </div>
+            <span class="block text-xs text-stone-500 mt-1">Your average on everything so far.</span>
+          </label>
+          <label class="block bg-cream rounded-md border border-cream-line p-4">
+            <span class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2">Final exam weight</span>
+            <div class="flex items-center gap-1">
+              <input id="in-weight" type="number" min="1" max="100" step="1" value="25" inputmode="decimal"
+                class="w-full text-2xl font-bold text-crimson-deep bg-white border border-cream-line rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="Final exam weight percent">
+              <span class="text-xl font-bold text-stone-400">%</span>
+            </div>
+            <span class="block text-xs text-stone-500 mt-1">From your syllabus. The rest counts as <span id="weight-rest" class="font-semibold">75%</span>.</span>
+          </label>
+          <div class="block bg-cream rounded-md border border-cream-line p-4">
+            <span class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2">Target course grade</span>
+            <div class="flex items-center gap-1">
+              <input id="in-target" type="number" min="0" max="100" step="0.1" value="90" inputmode="decimal"
+                class="w-full text-2xl font-bold text-crimson-deep bg-white border border-cream-line rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="Target course grade percent">
+              <span class="text-xl font-bold text-stone-400">%</span>
+            </div>
+            <div id="target-chips" class="flex gap-1.5 mt-2" aria-label="Quick pick a letter grade"></div>
+          </div>
+        </div>
+
+        <!-- HERO RESULT -->
+        <div class="relative bg-crimson-deep rounded-lg p-6 sm:p-8 text-center shadow-inner overflow-hidden mb-6">
+          <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(#D4AF37 1.5px, transparent 1.5px);background-size:22px 22px;"></div>
+          <div class="relative">
+            <p class="text-gold-light text-xs tracking-[0.3em] uppercase font-bold">You need to score</p>
+            <p class="font-report text-cream my-2"><span id="hero-score" class="text-6xl sm:text-7xl font-bold text-gold drop-shadow">—</span><span class="text-3xl text-gold-light">%</span></p>
+            <p class="text-cream/80 text-sm sm:text-base" id="hero-sub">on your final exam</p>
+            <div class="mt-4"><span id="hero-stamp" class="stamp text-gold-light text-sm sm:text-base">Awaiting grades</span></div>
+            <p id="hero-note" class="mt-3 text-cream/90 text-sm max-w-xl mx-auto"></p>
+          </div>
+        </div>
+
+        <!-- WORKED MATH -->
+        <details open class="bg-white border-2 border-dashed border-gold rounded-md p-4 sm:p-5 mb-6">
+          <summary class="cursor-pointer font-report text-lg font-bold text-crimson-deep select-none">📐 Show me the math <span class="text-sm font-body font-normal text-stone-500">(every step, with your numbers)</span></summary>
+          <div class="mt-3 font-mono text-sm sm:text-base leading-relaxed text-stone-800 overflow-x-auto">
+            <p class="text-stone-500 mb-2">Formula: <span class="font-bold text-crimson">needed = (target − current × (1 − weight)) ÷ weight</span></p>
+            <pre id="work-steps" class="whitespace-pre-wrap bg-cream rounded p-3 border border-cream-line">Enter your numbers above.</pre>
+          </div>
+        </details>
+      </div>
+
+      <!-- ===== PANEL: PROJECT MODE ===== -->
+      <div id="panel-project" role="tabpanel" class="hidden">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+          <label class="block bg-cream rounded-md border border-cream-line p-4">
+            <span class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2">Current grade (before final)</span>
+            <div class="flex items-center gap-1">
+              <input id="in-current-2" type="number" min="0" max="100" step="0.1" value="85" inputmode="decimal"
+                class="w-full text-2xl font-bold text-crimson-deep bg-white border border-cream-line rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="Current grade percent">
+              <span class="text-xl font-bold text-stone-400">%</span>
+            </div>
+          </label>
+          <label class="block bg-cream rounded-md border border-cream-line p-4">
+            <span class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2">Final exam weight</span>
+            <div class="flex items-center gap-1">
+              <input id="in-weight-2" type="number" min="1" max="100" step="1" value="25" inputmode="decimal"
+                class="w-full text-2xl font-bold text-crimson-deep bg-white border border-cream-line rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="Final exam weight percent">
+              <span class="text-xl font-bold text-stone-400">%</span>
+            </div>
+          </label>
+          <label class="block bg-cream rounded-md border border-cream-line p-4">
+            <span class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2">Expected final score</span>
+            <div class="flex items-center gap-1">
+              <input id="in-expected" type="number" min="0" max="100" step="0.1" value="90" inputmode="decimal"
+                class="w-full text-2xl font-bold text-crimson-deep bg-white border border-cream-line rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="Expected final exam score percent">
+              <span class="text-xl font-bold text-stone-400">%</span>
+            </div>
+          </label>
+        </div>
+        <div class="relative bg-crimson-deep rounded-lg p-6 sm:p-8 text-center shadow-inner overflow-hidden mb-6">
+          <div class="absolute inset-0 opacity-10" style="background-image:radial-gradient(#D4AF37 1.5px, transparent 1.5px);background-size:22px 22px;"></div>
+          <div class="relative">
+            <p class="text-gold-light text-xs tracking-[0.3em] uppercase font-bold">Your projected course grade</p>
+            <p class="font-report text-cream my-2"><span id="proj-score" class="text-6xl sm:text-7xl font-bold text-gold drop-shadow">—</span><span class="text-3xl text-gold-light">%</span></p>
+            <p class="text-cream/80 text-lg" id="proj-letter">—</p>
+            <div class="mt-4"><span id="proj-stamp" class="stamp text-gold-light text-sm sm:text-base">Awaiting grades</span></div>
+          </div>
+        </div>
+        <details open class="bg-white border-2 border-dashed border-gold rounded-md p-4 sm:p-5 mb-6">
+          <summary class="cursor-pointer font-report text-lg font-bold text-crimson-deep select-none">📐 Show me the math</summary>
+          <div class="mt-3 font-mono text-sm sm:text-base leading-relaxed text-stone-800 overflow-x-auto">
+            <p class="text-stone-500 mb-2">Formula: <span class="font-bold text-crimson">projected = current × (1 − weight) + final × weight</span></p>
+            <pre id="proj-steps" class="whitespace-pre-wrap bg-cream rounded p-3 border border-cream-line">Enter your numbers above.</pre>
+          </div>
+        </details>
+      </div>
+
+      <!-- ===== SCENARIO COMPARISON ===== -->
+      <div class="mb-6">
+        <div class="flex items-center gap-3 mb-1">
+          <h3 class="font-report text-xl sm:text-2xl font-bold text-crimson-deep">📊 What-if scenarios</h3>
+          <span class="text-xs bg-gold-pale text-crimson-deep border border-gold rounded-full px-2 py-0.5 font-semibold">Compare side-by-side</span>
+        </div>
+        <p class="text-sm text-stone-600 mb-4">Type three possible final-exam scores and see the course grade each one produces — instantly, using your numbers above.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4" id="scenario-cards">
+          <div class="bg-cream border-2 border-crimson/60 rounded-md p-4 text-center">
+            <label class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2" for="sc-0">If I score</label>
+            <div class="flex items-center justify-center gap-1 mb-2">
+              <input id="sc-0" type="number" min="0" max="100" step="1" value="70" inputmode="decimal" class="w-24 text-xl font-bold text-center text-crimson-deep bg-white border border-cream-line rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold">
+              <span class="font-bold text-stone-400">%</span>
+            </div>
+            <p class="text-3xl font-report font-bold text-crimson-deep"><span id="sc-res-0">—</span><span class="text-lg">%</span></p>
+            <p class="text-sm font-bold text-stone-600" id="sc-letter-0">—</p>
+          </div>
+          <div class="bg-cream border-2 border-crimson/60 rounded-md p-4 text-center">
+            <label class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2" for="sc-1">If I score</label>
+            <div class="flex items-center justify-center gap-1 mb-2">
+              <input id="sc-1" type="number" min="0" max="100" step="1" value="85" inputmode="decimal" class="w-24 text-xl font-bold text-center text-crimson-deep bg-white border border-cream-line rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold">
+              <span class="font-bold text-stone-400">%</span>
+            </div>
+            <p class="text-3xl font-report font-bold text-crimson-deep"><span id="sc-res-1">—</span><span class="text-lg">%</span></p>
+            <p class="text-sm font-bold text-stone-600" id="sc-letter-1">—</p>
+          </div>
+          <div class="bg-cream border-2 border-crimson/60 rounded-md p-4 text-center">
+            <label class="block text-xs font-bold tracking-widest uppercase text-crimson mb-2" for="sc-2">If I score</label>
+            <div class="flex items-center justify-center gap-1 mb-2">
+              <input id="sc-2" type="number" min="0" max="100" step="1" value="100" inputmode="decimal" class="w-24 text-xl font-bold text-center text-crimson-deep bg-white border border-cream-line rounded px-2 py-1.5 focus:outline-none focus:ring-2 focus:ring-gold">
+              <span class="font-bold text-stone-400">%</span>
+            </div>
+            <p class="text-3xl font-report font-bold text-crimson-deep"><span id="sc-res-2">—</span><span class="text-lg">%</span></p>
+            <p class="text-sm font-bold text-stone-600" id="sc-letter-2">—</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== CUSTOM GRADING SCALE ===== -->
+      <div class="bg-cream border border-cream-line rounded-md p-4 sm:p-5">
+        <div class="flex flex-wrap items-center justify-between gap-2 mb-1">
+          <h3 class="font-report text-xl font-bold text-crimson-deep">🎓 Grading scale</h3>
+          <button id="scale-reset" class="no-print text-xs font-bold text-crimson border border-crimson rounded px-3 py-1.5 hover:bg-crimson hover:text-cream transition-colors">Reset to A=90 standard</button>
+        </div>
+        <p class="text-sm text-stone-600 mb-4">Schools differ — set the cutoffs from your own syllabus. Letter grades everywhere on this page update instantly.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+          <label class="block bg-white border border-cream-line rounded p-3 text-center">
+            <span class="block font-report text-2xl font-bold text-crimson">A</span>
+            <span class="block text-[11px] uppercase tracking-wider text-stone-500 mb-1">at least</span>
+            <div class="flex items-center justify-center gap-1">
+              <input id="cut-a" type="number" min="0" max="100" step="0.5" value="90" class="w-20 text-center font-bold bg-cream border border-cream-line rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="A cutoff percent">
+              <span class="text-stone-400 font-bold">%</span>
+            </div>
+          </label>
+          <label class="block bg-white border border-cream-line rounded p-3 text-center">
+            <span class="block font-report text-2xl font-bold text-crimson">B</span>
+            <span class="block text-[11px] uppercase tracking-wider text-stone-500 mb-1">at least</span>
+            <div class="flex items-center justify-center gap-1">
+              <input id="cut-b" type="number" min="0" max="100" step="0.5" value="80" class="w-20 text-center font-bold bg-cream border border-cream-line rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="B cutoff percent">
+              <span class="text-stone-400 font-bold">%</span>
+            </div>
+          </label>
+          <label class="block bg-white border border-cream-line rounded p-3 text-center">
+            <span class="block font-report text-2xl font-bold text-crimson">C</span>
+            <span class="block text-[11px] uppercase tracking-wider text-stone-500 mb-1">at least</span>
+            <div class="flex items-center justify-center gap-1">
+              <input id="cut-c" type="number" min="0" max="100" step="0.5" value="70" class="w-20 text-center font-bold bg-cream border border-cream-line rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="C cutoff percent">
+              <span class="text-stone-400 font-bold">%</span>
+            </div>
+          </label>
+          <label class="block bg-white border border-cream-line rounded p-3 text-center">
+            <span class="block font-report text-2xl font-bold text-crimson">D</span>
+            <span class="block text-[11px] uppercase tracking-wider text-stone-500 mb-1">at least</span>
+            <div class="flex items-center justify-center gap-1">
+              <input id="cut-d" type="number" min="0" max="100" step="0.5" value="60" class="w-20 text-center font-bold bg-cream border border-cream-line rounded px-2 py-1 focus:outline-none focus:ring-2 focus:ring-gold" aria-label="D cutoff percent">
+              <span class="text-stone-400 font-bold">%</span>
+            </div>
+          </label>
+        </div>
+        <p id="scale-error" class="hidden mt-2 text-sm font-semibold text-red-700"></p>
+        <p class="mt-2 text-xs text-stone-500">Anything below the D cutoff counts as F. Cutoffs must stay in descending order (A &gt; B &gt; C &gt; D).</p>
+      </div>
+
+      <p class="text-center text-xs text-stone-500 mt-6">🔒 Everything runs in your browser — no sign-up, no uploads, nothing leaves this page.</p>
+    </div>
+  </section>
+
+  <!-- ============ BOTTOM AD (verbatim) ============ -->
+  <div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+    <div class="mx-auto text-center" style="max-width:728px">
+      <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+      <div class="flex justify-center overflow-hidden">
+        <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+      </div>
+    </div>
+  </div>
+</main>
+
+<!-- ============ SEO ARTICLE ============ -->
+<article id="seo-article" class="mx-auto max-w-4xl px-4 sm:px-6 py-10 text-stone-800">
+  <h2 class="font-report text-3xl sm:text-4xl font-bold text-crimson-deep mb-6">Final Grade Calculator: Exactly What You Need on Your Final Exam</h2>
+
+  <p class="mb-4 leading-relaxed">Finals week has a special kind of anxiety. You have poured a whole semester into a course, your current grade sits somewhere in the eighties, and one big exam still stands between you and the transcript you want. The question echoing in every student's head is the same: <strong>what do I need on my final to get an A?</strong> A final grade calculator answers that question in seconds — not with a guess, but with the exact weighted-grade math your instructor uses.</p>
+
+  <p class="mb-4 leading-relaxed">This guide explains how the calculation works, why the weight of your final exam matters more than most students realize, how to read an "impossible" result without panicking, and how to turn the number you get into a study plan that actually fits the time you have left. Whether you are in high school, college, or an online program anywhere in the world, the math is the same — and once you understand it, you will never have to guess again.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">How a final grade calculator actually works</h3>
+
+  <p class="mb-4 leading-relaxed">Almost every course grade is a <strong>weighted average</strong>. Your syllabus assigns each category — homework, quizzes, midterms, projects, the final exam — a percentage weight, and all the weights add up to 100%. Your current grade is the weighted average of everything completed so far. The final exam fills in the one remaining slot.</p>
+
+  <p class="mb-4 leading-relaxed">The calculator solves one equation for the unknown final-exam score. Written out, the formula is: <strong>needed = (target − current × (1 − weight)) ÷ weight</strong>, where all values are decimals. If your current grade is 85%, the final is worth 25% of the course, and you want a 90% overall, the math goes: (0.90 − 0.85 × 0.75) ÷ 0.25 = (0.90 − 0.6375) ÷ 0.25 = 0.2625 ÷ 0.25 = 1.05, or <strong>105%</strong>. That result tells a story all by itself — more on that in a moment.</p>
+
+  <p class="mb-4 leading-relaxed">The reverse question — "if I score X on the final, where do I land?" — uses the companion formula: <strong>projected = current × (1 − weight) + final × weight</strong>. Same ingredients, just rearranged. GradeNeed shows you every step of both calculations with your own numbers plugged in, so you can verify the result by hand or show your work to a study partner.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">Why the weight of your final exam changes everything</h3>
+
+  <p class="mb-4 leading-relaxed">Students routinely underestimate how much leverage the final's weight gives it. A final worth 10% of your grade can only nudge your average a few points in either direction; a final worth 40% can rescue a shaky semester or sink a strong one. Consider a student sitting at 82% who wants a 90%. With a 20%-weight final, they would need (90 − 82 × 0.8) ÷ 0.2 = 122% — impossible. With a 40%-weight final, they would need (90 − 82 × 0.6) ÷ 0.4 = 102.5% — still impossible, but closer. Now flip it: a student at 88% wanting a 90% needs only (90 − 88 × 0.8) ÷ 0.2 = 98% on a 20%-weight final, but a far more comfortable (90 − 88 × 0.6) ÷ 0.4 = 93% when the final is worth 40%.</p>
+
+  <p class="mb-4 leading-relaxed">The pattern is consistent: <strong>the heavier the final, the more it rewards students who are already close to their target</strong> — and the more it punishes students who are far away, because every point of the gap gets divided by a larger weight. That is why the first thing any serious finals-week plan needs is the real weight from your syllabus, not a guess. Check the document itself; instructors sometimes adjust weights mid-semester, and a stale number makes every calculation wrong.</p>
+
+  <p class="mb-4 leading-relaxed">There is also a subtle trap worth knowing about. Many students compute their "current grade" as a simple average of assignment scores, ignoring that homework might be worth 15% while midterms are worth 35%. If your current grade input is wrong, the needed-score output is wrong too. When in doubt, build your current grade from the same weighted math: multiply each category average by its weight and add them up. If your course uses points instead of percentages, convert first — points earned divided by points possible, times the category weight.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">Reading an "impossible" result the right way</h3>
+
+  <p class="mb-4 leading-relaxed">Sooner or later, a final grade calculator will tell you that you need 104%, or 118%, or some other score no exam can give. Most tools either show the absurd number without comment or quietly cap it at 100% and pretend everything is fine. Both responses are unhelpful. An honest calculator does something better: it says plainly that the target is mathematically out of reach, and immediately shows you <strong>the highest grade you could still earn with a perfect final</strong>.</p>
+
+  <p class="mb-4 leading-relaxed">That maximum is computed by plugging 100% into the projection formula. If you are at 80% with a 30%-weight final, a perfect exam gets you 80 × 0.7 + 100 × 0.3 = 86% — a solid B on the standard scale. Knowing your ceiling reframes the whole situation: the question stops being "how do I get an A?" and becomes "how do I lock in the best grade that is actually available?" That is a plan you can execute instead of a fantasy that fuels anxiety.</p>
+
+  <p class="mb-4 leading-relaxed">There is one more scenario students love to discover: the calculator telling you that you need a negative score — say, −12%. That means your target is already secured. Even a zero on the final keeps you above your goal. The smart move then is to confirm it by checking what a zero would produce (the projection formula with 0 plugged in), and then allocate your study hours to the courses where the outcome is still in doubt. Finals week is a resource-allocation problem, and an already-secured course is the easiest decision you will make all semester.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">The reverse question: projecting your course grade</h3>
+
+  <p class="mb-4 leading-relaxed">The forward calculation — what you need — is only half the story. The reverse mode answers "what if I score 75%? What about 85%? What about 95%?" and it is the mode you will use most once studying is underway. After a practice exam, plug in your practice score and see where it lands you. After a rough week, plug in a pessimistic score and check whether your target survives. This is scenario planning, and it turns vague dread into concrete numbers.</p>
+
+  <p class="mb-4 leading-relaxed">The most useful way to run scenarios is in a small batch: a pessimistic score, a realistic score, and an optimistic score, side by side. That is exactly what the scenario cards above do. Notice how the gaps between scenarios shrink or grow with the final's weight — with a 15%-weight final, the difference between scoring 70% and 100% is only 4.5 course points, but with a 40%-weight final, the same spread is 12 course points. That tells you something important about where an extra hour of studying pays off most.</p>
+
+  <p class="mb-4 leading-relaxed">One caution: be honest with your scenario inputs. Students tend to anchor on their best-ever exam score rather than their typical one. A realistic projection uses your median performance on similar exams in that subject, not your personal best. If your last three chemistry exams were 78, 82, and 79, then 80 is your realistic scenario — and the plan you build around 80 will serve you better than the fantasy you build around 97.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">Turning your needed score into a study plan</h3>
+
+  <p class="mb-4 leading-relaxed">A number is only useful if it changes what you do. Here is how to convert "I need an 88%" into a week of studying. First, translate the percentage into the exam's raw structure. If the final has 50 questions, 88% means you can miss about 6. If it is four essays, you need roughly a B+ average across them. Percentages feel abstract; "I can afford to miss six" feels like a strategy.</p>
+
+  <p class="mb-4 leading-relaxed">Second, match your effort to the gap. If you need within 5 points of your current average, your job is mostly <strong>maintenance</strong>: keep doing what works, fix one or two weak topics, sleep properly the night before. If you need 10–15 points above your average, you need <strong>targeted repair</strong>: identify the two or three topics costing you the most marks and drill them with past papers. If you need 20+ points above your average, be realistic — that kind of jump usually requires relearning material, not reviewing it, so check your maximum achievable grade first and decide whether the stretch target is worth the hours it would demand from your other courses.</p>
+
+  <p class="mb-4 leading-relaxed">Third, weight your study time the way your course weights its grades. Students love to over-study the topics they already know because it feels good. Instead, estimate the marks each topic can contribute and attack the highest-yield gaps first. A topic worth 20% of the exam that you half-understand is worth far more study time than a topic worth 5% that you have nearly mastered.</p>
+
+  <p class="mb-4 leading-relaxed">Finally, remember that the calculator assumes your current grade is final. If any coursework is still ungraded or can be revised — a dropped lowest quiz, extra credit, a re-submitted assignment — improving your current grade by even two points can shave several points off what you need on the final. Always check the syllabus for grade-replacement policies before you lock in your numbers.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">Grading scales are not universal — customize yours</h3>
+
+  <p class="mb-4 leading-relaxed">The familiar A=90, B=80, C=70, D=60 scale is common in the United States, but it is far from universal. Some schools use 93 for an A; some use plus/minus tiers (A− at 90, B+ at 87); some courses curve; many countries use entirely different systems. A calculator that hard-codes one scale will mislabel your projected grade, which is exactly the kind of small error that causes big misunderstandings.</p>
+
+  <p class="mb-4 leading-relaxed">That is why GradeNeed lets you edit every cutoff. Open your syllabus, find the grading scale table, and type in your instructor's actual numbers. Every letter grade on the page — the target quick-picks, the projected results, the scenario cards — updates to match. If your course uses plus/minus grades, approximate by setting the main cutoffs and mentally noting the borderlines; the percentage math underneath does not change, only the labels do.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">Mistakes students make with final-grade math</h3>
+
+  <p class="mb-4 leading-relaxed">The most common error is <strong>mixing up weight and points</strong>. A final "worth 200 points" in a 1000-point course is a 20% weight — but students often type 200 into the weight field and get nonsense out. Always convert to a percentage of the total first.</p>
+
+  <p class="mb-4 leading-relaxed">The second is <strong>forgetting that the current grade excludes the final</strong>. Your "current grade" should be your average on the other 75% (or whatever remains) of the course — not a guess that already includes wishful thinking about the final. If your learning management system shows a running total, use it; just confirm whether it counts unsubmitted work as zero.</p>
+
+  <p class="mb-4 leading-relaxed">The third is <strong>rounding too early</strong>. A needed score of 89.6% is not 90% — it is 89.6%, and on a 50-question exam that 0.4% is the difference between missing 5 questions and missing 5.2. Keep one decimal place through the whole calculation and round only at the very end.</p>
+
+  <p class="mb-4 leading-relaxed">The fourth is <strong>ignoring the syllabus curve</strong>. If your instructor curves final grades, no calculator can predict the outcome exactly, because the curve depends on everyone's performance. In curved courses, use the calculator for the uncurved projection and treat it as a conservative estimate — curves almost always help, rarely hurt.</p>
+
+  <h3 class="font-report text-2xl font-bold text-crimson-deep mt-8 mb-4">Final grades around the world</h3>
+
+  <p class="mb-4 leading-relaxed">The percentage math in this calculator works for any system that ultimately reports a percentage, which covers most of the world. In the US, percentages map to letter grades and the 4.0 GPA scale. In India, many universities use a 10-point CGPA system where percentages convert to grade points (often percentage ÷ 9.5). In the UK, degree classifications — First, Upper Second (2:1), Lower Second (2:2), Third — map to percentage bands like 70+, 60–69, 50–59, and 40–49. In much of Europe, grades run on scales like 1–10 or 1–6 where the pass mark sits at different points.</p>
+
+  <p class="mb-4 leading-relaxed">Whatever your local system, the workflow is the same: convert your current standing and your target into percentages, run the calculation, then convert the answer back into your local grades. And if your institution's bands differ from the American default, the customizable scale editor above handles it — set D to your actual pass mark and the rest follows.</p>
+
+  <p class="mb-4 leading-relaxed">Final exams feel high-stakes because they are the last big lever you can pull. But "high-stakes" and "mysterious" are not the same thing. Three numbers — where you stand, how much the final counts, where you want to land — determine everything, and now you know exactly how they fit together. Run your numbers, read the result honestly, build your plan around what is actually achievable, and walk into that exam knowing precisely what a good day looks like. Good luck — you have done the math, and the math is on your side.</p>
+</article>
+
+<!-- ============ FAQs ============ -->
+<section class="mx-auto max-w-4xl px-4 sm:px-6 pb-12" aria-label="Frequently asked questions">
+  <h2 class="font-report text-3xl font-bold text-crimson-deep mb-6 text-center">Frequently Asked Questions</h2>
+  <div class="space-y-3">
+    <details class="faq-item bg-white border border-cream-line rounded-md p-4" data-faq="true">
+      <summary class="cursor-pointer font-bold text-crimson-deep">How do I calculate what grade I need on my final exam?</summary>
+      <p class="mt-2 text-stone-700 leading-relaxed">Enter three numbers: your current course grade (everything before the final), the final exam's weight as a percentage, and the overall grade you want. The calculator uses the formula needed = (target − current × (1 − weight)) ÷ weight. For example, with an 85% current grade, a 25% final, and a 90% target, you need (90 − 85 × 0.75) ÷ 0.25 = 105% — which means the target is out of reach, and you should check your maximum achievable grade instead.</p>
+    </details>
+    <details class="faq-item bg-white border border-cream-line rounded-md p-4" data-faq="true">
+      <summary class="cursor-pointer font-bold text-crimson-deep">What does it mean if the calculator says I need more than 100%?</summary>
+      <p class="mt-2 text-stone-700 leading-relaxed">It means your target grade is mathematically impossible — even a perfect 100% on the final cannot get you there. Do not panic: look at the maximum achievable grade the calculator shows (your projected grade with a perfect final). Reset your goal to that ceiling, or to the best grade below it that is still reachable, and build your study plan around the achievable target instead.</p>
+    </details>
+    <details class="faq-item bg-white border border-cream-line rounded-md p-4" data-faq="true">
+      <summary class="cursor-pointer font-bold text-crimson-deep">How does the weight of the final exam affect the score I need?</summary>
+      <p class="mt-2 text-stone-700 leading-relaxed">Enormously. A heavier final gives you more leverage: if you are close to your target, a high-weight final makes it easier to reach, because each point you earn counts more. But if you are far below your target, a heavy final makes the needed score climb faster. As a rule of thumb, every 10 extra points of weight noticeably shrinks the gap between your current grade and your needed score — run the numbers with your real syllabus weight to see exactly how much.</p>
+    </details>
+    <details class="faq-item bg-white border border-cream-line rounded-md p-4" data-faq="true">
+      <summary class="cursor-pointer font-bold text-crimson-deep">Can I use this for college courses with weighted categories?</summary>
+      <p class="mt-2 text-stone-700 leading-relaxed">Yes. First compute your current grade as a weighted average of the finished categories (each category average times its syllabus weight, added together). Enter that as your current grade, enter the final exam's weight, and calculate. The math is identical whether your course has three categories or thirteen — only the current-grade input takes a little more work to prepare.</p>
+    </details>
+    <details class="faq-item bg-white border border-cream-line rounded-md p-4" data-faq="true">
+      <summary class="cursor-pointer font-bold text-crimson-deep">What is the exact formula for the grade needed on a final?</summary>
+      <p class="mt-2 text-stone-700 leading-relaxed">Needed final score = (target grade − current grade × (1 − final weight)) ÷ final weight, with all values as decimals. The reverse formula — your projected course grade if you score a certain mark — is: projected = current grade × (1 − final weight) + final score × final weight. GradeNeed displays both formulas with your numbers plugged into every step so you can verify the arithmetic yourself.</p>
+    </details>
+    <details class="faq-item bg-white border border-cream-line rounded-md p-4" data-faq="true">
+      <summary class="cursor-pointer font-bold text-crimson-deep">My school uses a different grading scale. Does it matter?</summary>
+      <p class="mt-2 text-stone-700 leading-relaxed">It matters for the letter grade, not for the percentage math. A needed score of 91% is an A under the standard A=90 scale but a B+ at a school where A starts at 93. Use the grading-scale editor on this page to enter your syllabus cutoffs, and every letter grade shown — targets, projections, and scenarios — will follow your school's scale.</p>
+    </details>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<footer class="no-print bg-crimson-deep text-cream/80 border-t-4 border-gold">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+    <p class="font-report text-xl font-bold text-cream"><span class="text-gold">▮</span> Grade<span class="text-gold">Need</span></p>
+    <p class="text-sm text-center">Free final grade calculator. Your numbers never leave your browser.</p>
+    <nav class="flex items-center gap-4 text-sm font-semibold">
+      <a href="#top" class="hover:text-gold transition-colors">Home</a>
+      <span class="text-gold/60" aria-hidden="true">|</span>
+      <a href="https://fixoraa.tech" class="hover:text-gold transition-colors">More Tools</a>
+    </nav>
+  </div>
+  <p class="text-center text-xs text-cream/50 pb-6">© 2026 GradeNeed. For planning purposes — always confirm with your official syllabus.</p>
+</footer>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How do I calculate what grade I need on my final exam?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Enter your current course grade, the final exam's weight, and your target grade. The calculator uses the formula needed = (target − current × (1 − weight)) ÷ weight. For example, with an 85% current grade, a 25% final, and a 90% target, you need (90 − 85 × 0.75) ÷ 0.25 = 105%, which means the target is out of reach." }
+    },
+    {
+      "@type": "Question",
+      "name": "What does it mean if the calculator says I need more than 100%?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It means your target grade is mathematically impossible — even a perfect 100% on the final cannot get you there. Check the maximum achievable grade shown by the calculator, reset your goal to that ceiling, and build your study plan around the achievable target." }
+    },
+    {
+      "@type": "Question",
+      "name": "How does the weight of the final exam affect the score I need?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A heavier final gives you more leverage: if you are close to your target it becomes easier to reach, but if you are far below target the needed score climbs faster. Every 10 extra points of weight noticeably shrinks the gap between your current grade and the score you need." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can I use this for college courses with weighted categories?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Compute your current grade as a weighted average of the finished categories (each category average times its syllabus weight, added together), enter it as your current grade, then enter the final exam's weight and calculate." }
+    },
+    {
+      "@type": "Question",
+      "name": "What is the exact formula for the grade needed on a final?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Needed final score = (target grade − current grade × (1 − final weight)) ÷ final weight, with all values as decimals. The reverse projection formula is: projected = current grade × (1 − final weight) + final score × final weight." }
+    },
+    {
+      "@type": "Question",
+      "name": "My school uses a different grading scale. Does it matter?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It matters for the letter grade, not the percentage math. Use the grading-scale editor to enter your syllabus cutoffs so every letter grade shown follows your school's scale." }
+    }
+  ]
+}
+</script>
+
+<!-- ============ PURE LOGIC (no DOM — also loaded by Node tests) ============ -->
+<script id="gradeneed-logic">
+'use strict';
+function gnParseNumber(raw) {
+  if (raw === null || raw === undefined) return null;
+  var v = parseFloat(String(raw).trim());
+  return Number.isFinite(v) ? v : null;
+}
+function gnValidatePercent(raw, label) {
+  var v = gnParseNumber(raw);
+  if (v === null) return { ok: false, value: null, error: label + ' must be a number.' };
+  if (v < 0 || v > 100) return { ok: false, value: v, error: label + ' must be between 0 and 100.' };
+  return { ok: true, value: v, error: null };
+}
+function gnValidateWeight(raw) {
+  var v = gnParseNumber(raw);
+  if (v === null) return { ok: false, value: null, error: 'Final exam weight must be a number.' };
+  if (!(v > 0) || v > 100) return { ok: false, value: v, error: 'Final exam weight must be more than 0% and at most 100%.' };
+  return { ok: true, value: v, error: null };
+}
+/* needed = (target − current×(1−w)) / w */
+function gnNeededOnFinal(current, weightPct, target) {
+  var w = weightPct / 100;
+  if (!(w > 0) || w > 1) return { ok: false, needed: null, error: 'Final exam weight must be between 0 and 100.' };
+  return { ok: true, needed: (target - current * (1 - w)) / w, error: null };
+}
+function gnProjectedGrade(current, weightPct, finalScore) {
+  var w = weightPct / 100;
+  return current * (1 - w) + finalScore * w;
+}
+function gnMaxAchievable(current, weightPct) { return gnProjectedGrade(current, weightPct, 100); }
+function gnFloorGrade(current, weightPct) { return gnProjectedGrade(current, weightPct, 0); }
+function gnDefaultScale() {
+  return [
+    { letter: 'A', min: 90 },
+    { letter: 'B', min: 80 },
+    { letter: 'C', min: 70 },
+    { letter: 'D', min: 60 },
+    { letter: 'F', min: 0 }
+  ];
+}
+function gnValidateScale(cuts) {
+  if (!Array.isArray(cuts) || cuts.length !== 4) return { ok: false, scale: null, error: 'Need four cutoffs.' };
+  for (var i = 0; i < 4; i++) {
+    if (!Number.isFinite(cuts[i]) || cuts[i] < 0 || cuts[i] > 100)
+      return { ok: false, scale: null, error: 'Cutoffs must be numbers between 0 and 100.' };
+  }
+  for (var j = 0; j < 3; j++) {
+    if (!(cuts[j] > cuts[j + 1]))
+      return { ok: false, scale: null, error: 'Cutoffs must stay in descending order: A > B > C > D.' };
+  }
+  var letters = ['A', 'B', 'C', 'D'];
+  var scale = letters.map(function(L, k) { return { letter: L, min: cuts[k] }; });
+  scale.push({ letter: 'F', min: 0 });
+  return { ok: true, scale: scale, error: null };
+}
+function gnLetterGrade(score, scale) {
+  var s = (Array.isArray(scale) && scale.length ? scale : gnDefaultScale()).slice()
+    .sort(function(a, b) { return b.min - a.min; });
+  for (var i = 0; i < s.length; i++) { if (score >= s[i].min) return s[i].letter; }
+  return s[s.length - 1].letter;
+}
+function gnClassifyNeeded(needed) {
+  if (needed > 100) return 'impossible';
+  if (needed < 0) return 'already';
+  return 'possible';
+}
+function gnScenarioRows(current, weightPct, finalScores, scale) {
+  return finalScores.map(function(fs) {
+    var p = gnProjectedGrade(current, weightPct, fs);
+    return { finalScore: fs, projected: p, letter: gnLetterGrade(p, scale) };
+  });
+}
+function gnFmt(x, d) {
+  d = (d === undefined ? 1 : d);
+  var f = Math.pow(10, d);
+  return (Math.round(x * f) / f).toFixed(d);
+}
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = {
+    gnParseNumber: gnParseNumber,
+    gnValidatePercent: gnValidatePercent,
+    gnValidateWeight: gnValidateWeight,
+    gnNeededOnFinal: gnNeededOnFinal,
+    gnProjectedGrade: gnProjectedGrade,
+    gnMaxAchievable: gnMaxAchievable,
+    gnFloorGrade: gnFloorGrade,
+    gnDefaultScale: gnDefaultScale,
+    gnValidateScale: gnValidateScale,
+    gnLetterGrade: gnLetterGrade,
+    gnClassifyNeeded: gnClassifyNeeded,
+    gnScenarioRows: gnScenarioRows,
+    gnFmt: gnFmt
+  };
+}
+</script>
+
+<!-- ============ UI WIRING ============ -->
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+  var LS_KEY = 'gradeneed-v1';
+
+  var state = {
+    mode: 'need',
+    scale: gnDefaultScale(),
+    scenarios: [70, 85, 100]
+  };
+
+  /* ---------- tabs ---------- */
+  var tabNeed = $('tab-need'), tabProject = $('tab-project');
+  var panelNeed = $('panel-need'), panelProject = $('panel-project');
+  function setMode(m) {
+    state.mode = m;
+    var need = (m === 'need');
+    tabNeed.classList.toggle('tab-active', need);
+    tabProject.classList.toggle('tab-active', !need);
+    tabNeed.setAttribute('aria-selected', need);
+    tabProject.setAttribute('aria-selected', !need);
+    panelNeed.classList.toggle('hidden', !need);
+    panelProject.classList.toggle('hidden', need);
+    save();
+  }
+  tabNeed.addEventListener('click', function () { setMode('need'); });
+  tabProject.addEventListener('click', function () { setMode('project'); });
+
+  /* ---------- target letter chips ---------- */
+  function renderChips() {
+    var box = $('target-chips');
+    box.innerHTML = '';
+    state.scale.forEach(function (g) {
+      if (g.letter === 'F') return;
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.textContent = g.letter + ' ≥' + g.min;
+      b.className = 'no-print text-xs font-bold px-2.5 py-1 rounded-full border border-crimson text-crimson hover:bg-crimson hover:text-cream transition-colors';
+      b.addEventListener('click', function () { $('in-target').value = g.min; recalc(); });
+      box.appendChild(b);
+    });
+  }
+
+  /* ---------- scale editor ---------- */
+  var cutIds = ['cut-a', 'cut-b', 'cut-c', 'cut-d'];
+  function readScale() {
+    var cuts = cutIds.map(function (id) { return gnParseNumber($(id).value); });
+    var res = gnValidateScale(cuts);
+    var err = $('scale-error');
+    if (!res.ok) {
+      err.textContent = '⚠ ' + res.error + ' Keeping your previous scale.';
+      err.classList.remove('hidden');
+      return false;
+    }
+    err.classList.add('hidden');
+    state.scale = res.scale;
+    renderChips();
+    return true;
+  }
+  cutIds.forEach(function (id) {
+    $(id).addEventListener('input', function () { if (readScale()) recalc(); });
+  });
+  $('scale-reset').addEventListener('click', function () {
+    var d = [90, 80, 70, 60];
+    cutIds.forEach(function (id, i) { $(id).value = d[i]; });
+    readScale(); recalc();
+  });
+
+  /* ---------- main calc ---------- */
+  function showInvalid(msg) {
+    $('hero-score').textContent = '—';
+    $('hero-sub').textContent = 'on your final exam';
+    $('hero-stamp').textContent = 'Check inputs';
+    $('hero-stamp').style.color = '#FCA5A5';
+    $('hero-note').textContent = msg;
+    $('work-steps').textContent = 'Fix the highlighted input to see the worked math.';
+  }
+
+  function recalc() {
+    var cur = gnValidatePercent($('in-current').value, 'Current grade');
+    var wt = gnValidateWeight($('in-weight').value);
+    var tgt = gnValidatePercent($('in-target').value, 'Target grade');
+    $('weight-rest').textContent = (wt.ok ? gnFmt(100 - wt.value, 0) : '—') + '%';
+
+    var err = !cur.ok ? cur.error : (!wt.ok ? wt.error : (!tgt.ok ? tgt.error : null));
+    if (err) { showInvalid(err); updateScenarios(null); updateProject(null); save(); return; }
+
+    var r = gnNeededOnFinal(cur.value, wt.value, tgt.value);
+    var cls = gnClassifyNeeded(r.needed);
+    var w = wt.value / 100;
+
+    $('hero-score').textContent = gnFmt(r.needed, 1);
+    var stamp = $('hero-stamp'), note = $('hero-note'), sub = $('hero-sub');
+    stamp.style.color = '';
+    if (cls === 'possible') {
+      sub.textContent = 'on your final exam to finish with ' + gnFmt(tgt.value, 1) + '% (' + gnLetterGrade(tgt.value, state.scale) + ')';
+      if (r.needed < 80) { stamp.textContent = 'Very doable'; stamp.style.color = '#86EFAC'; note.textContent = 'This is below your current average — a steady, focused performance gets you there.'; }
+      else if (r.needed <= 95) { stamp.textContent = 'Tough but doable'; stamp.style.color = '#FDE68A'; note.textContent = 'You need to outperform your average. Target your weakest topics first.'; }
+      else { stamp.textContent = 'Near-perfect needed'; stamp.style.color = '#FCA5A5'; note.textContent = 'Almost no margin for error. A single slipped question could cost the target — plan for a flawless attempt.'; }
+    } else if (cls === 'impossible') {
+      var max = gnMaxAchievable(cur.value, wt.value);
+      sub.textContent = 'on your final exam — but that is over 100%';
+      stamp.textContent = 'Mathematically impossible';
+      stamp.style.color = '#FCA5A5';
+      note.textContent = 'Even a perfect 100% on the final only gets you to ' + gnFmt(max, 1) + '% (' + gnLetterGrade(max, state.scale) + '). Aim for that ceiling instead — it is the best grade actually available to you.';
+    } else {
+      var floor = gnFloorGrade(cur.value, wt.value);
+      sub.textContent = 'on your final exam — you already did it';
+      stamp.textContent = 'Target already secured ✓';
+      stamp.style.color = '#86EFAC';
+      note.textContent = 'Even a 0% on the final leaves you at ' + gnFmt(floor, 1) + '% (' + gnLetterGrade(floor, state.scale) + '), above your target. Spend your study hours where the outcome is still in doubt.';
+    }
+
+    /* worked steps */
+    var kept = gnFmt(cur.value * (1 - w), 2);
+    $('work-steps').textContent =
+      'needed = (target − current × (1 − weight)) ÷ weight\n' +
+      '       = (' + gnFmt(tgt.value, 1) + ' − ' + gnFmt(cur.value, 1) + ' × (1 − ' + gnFmt(w, 2) + ')) ÷ ' + gnFmt(w, 2) + '\n' +
+      '       = (' + gnFmt(tgt.value, 1) + ' − ' + gnFmt(cur.value, 1) + ' × ' + gnFmt(1 - w, 2) + ') ÷ ' + gnFmt(w, 2) + '\n' +
+      '       = (' + gnFmt(tgt.value, 1) + ' − ' + kept + ') ÷ ' + gnFmt(w, 2) + '\n' +
+      '       = ' + gnFmt(tgt.value - cur.value * (1 - w), 2) + ' ÷ ' + gnFmt(w, 2) + '\n' +
+      '       = ' + gnFmt(r.needed, 1) + '%';
+
+    updateScenarios({ current: cur.value, weight: wt.value });
+    updateProject({ current: cur.value, weight: wt.value });
+    save();
+  }
+
+  function updateProject(base) {
+    if (!base) {
+      $('proj-score').textContent = '—'; $('proj-letter').textContent = '—';
+      $('proj-stamp').textContent = 'Check inputs'; $('proj-steps').textContent = 'Fix the highlighted input to see the worked math.';
+      return;
+    }
+    var exp = gnValidatePercent($('in-expected').value, 'Expected final score');
+    if (!exp.ok) {
+      $('proj-score').textContent = '—'; $('proj-letter').textContent = '—';
+      $('proj-stamp').textContent = 'Check inputs'; $('proj-steps').textContent = exp.error;
+      return;
+    }
+    var p = gnProjectedGrade(base.current, base.weight, exp.value);
+    var w = base.weight / 100;
+    $('proj-score').textContent = gnFmt(p, 1);
+    $('proj-letter').textContent = 'Letter grade: ' + gnLetterGrade(p, state.scale);
+    $('proj-stamp').textContent = gnLetterGrade(p, state.scale) + ' territory';
+    $('proj-stamp').style.color = '#FDE68A';
+    $('proj-steps').textContent =
+      'projected = current × (1 − weight) + final × weight\n' +
+      '          = ' + gnFmt(base.current, 1) + ' × ' + gnFmt(1 - w, 2) + ' + ' + gnFmt(exp.value, 1) + ' × ' + gnFmt(w, 2) + '\n' +
+      '          = ' + gnFmt(base.current * (1 - w), 2) + ' + ' + gnFmt(exp.value * w, 2) + '\n' +
+      '          = ' + gnFmt(p, 1) + '%  →  ' + gnLetterGrade(p, state.scale);
+  }
+
+  /* ---------- scenarios ---------- */
+  function updateScenarios(base) {
+    for (var i = 0; i < 3; i++) {
+      var v = gnValidatePercent($('sc-' + i).value, 'Scenario ' + (i + 1));
+      if (!base || !v.ok) {
+        $('sc-res-' + i).textContent = '—'; $('sc-letter-' + i).textContent = '—';
+        continue;
+      }
+      var p = gnProjectedGrade(base.current, base.weight, v.value);
+      $('sc-res-' + i).textContent = gnFmt(p, 1);
+      $('sc-letter-' + i).textContent = 'Grade ' + gnLetterGrade(p, state.scale);
+    }
+  }
+
+  /* ---------- persistence ---------- */
+  function save() {
+    try {
+      localStorage.setItem(LS_KEY, JSON.stringify({
+        mode: state.mode,
+        current: $('in-current').value, weight: $('in-weight').value, target: $('in-target').value,
+        expected: $('in-expected').value,
+        cuts: cutIds.map(function (id) { return $(id).value; }),
+        scenarios: [0, 1, 2].map(function (i) { return $('sc-' + i).value; })
+      }));
+    } catch (e) { /* private mode — ignore */ }
+  }
+  function load() {
+    try {
+      var s = JSON.parse(localStorage.getItem(LS_KEY) || 'null');
+      if (!s) return;
+      if (s.current !== undefined) $('in-current').value = s.current;
+      if (s.weight !== undefined) $('in-weight').value = s.weight;
+      if (s.target !== undefined) $('in-target').value = s.target;
+      if (s.expected !== undefined) $('in-expected').value = s.expected;
+      if (Array.isArray(s.cuts)) s.cuts.forEach(function (v, i) { if (v !== undefined) $(cutIds[i]).value = v; });
+      if (Array.isArray(s.scenarios)) s.scenarios.forEach(function (v, i) { if (v !== undefined) $('sc-' + i).value = v; });
+      setMode(s.mode === 'project' ? 'project' : 'need');
+    } catch (e) { /* ignore */ }
+  }
+
+  /* ---------- wire inputs ---------- */
+  ['in-current', 'in-weight', 'in-target', 'in-expected', 'sc-0', 'sc-1', 'sc-2'].forEach(function (id) {
+    $(id).addEventListener('input', function () {
+      if (id === 'in-current' || id === 'in-weight') {
+        $('in-current-2').value = $('in-current').value;
+        $('in-weight-2').value = $('in-weight').value;
+      }
+      if (id === 'in-current-2' || id === 'in-weight-2') { /* project panel mirrors */ }
+      recalc();
+    });
+  });
+  /* keep the two panels' shared inputs in sync */
+  $('in-current-2').addEventListener('input', function () { $('in-current').value = $('in-current-2').value; recalc(); });
+  $('in-weight-2').addEventListener('input', function () { $('in-weight').value = $('in-weight-2').value; recalc(); });
+
+  load();
+  renderChips();
+  readScale();
+  recalc();
+})();
+</script>
+</body>
+</html>
